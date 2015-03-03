@@ -12,15 +12,16 @@ import org.reactivestreams._
 
 class SyncIterablePublisherTest extends AkkaPublisherVerification[Int] {
 
+  override lazy val system = createActorSystem()
+
   def createPublisher(elements: Long): Publisher[Int] = {
     val iterable: immutable.Iterable[Int] =
-      if (elements == Long.MaxValue)
-        new immutable.Iterable[Int] { override def iterator = Iterator from 0 }
+      if (elements >= 10000)
+        0 until 10000 // this publisher is not intended to be used for large collections
       else
         0 until elements.toInt
 
     Source(SynchronousIterablePublisher(iterable, "synchronous-iterable-publisher")).runWith(Sink.publisher())
   }
 
-  override def spec317_mustSignalOnErrorWhenPendingAboveLongMaxValue() = notVerified("RS TCK 1.0.0.M3 does not handle sync publishers well")
 }

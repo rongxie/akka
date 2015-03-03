@@ -3,19 +3,15 @@
  */
 package akka.stream.tck
 
-import akka.stream.impl.HeadSink
 import akka.stream.scaladsl._
 import org.reactivestreams.Subscriber
 
-import scala.concurrent.Promise
-
-class HeadSinkSubscriberTest extends AkkaSubscriberBlackboxVerification[Int] {
-  import HeadSink._
+class ForeachSinkSubscriberTest extends AkkaSubscriberBlackboxVerification[Int] {
 
   override lazy val system = createActorSystem()
 
   override def createSubscriber(): Subscriber[Int] =
-    new HeadSinkSubscriber[Int](Promise[Int]())
+    Flow[Int].to(Sink.foreach { _ ⇒ }).runWith(Source.subscriber())
 
   override def createElement(element: Int): Int = element
 }

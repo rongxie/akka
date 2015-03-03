@@ -19,11 +19,12 @@ object ActorSubscriberOneByOneRequestTest {
 class ActorSubscriberOneByOneRequestTest extends AkkaSubscriberBlackboxVerification[Int] {
   import ActorSubscriberOneByOneRequestTest._
 
+  override lazy val system = createActorSystem()
+
   override def createSubscriber(): Subscriber[Int] = {
     val props = Props(classOf[StrategySubscriber], OneByOneRequestStrategy)
     ActorSubscriber(system.actorOf(props.withDispatcher("akka.test.stream-dispatcher")))
   }
 
-  override def createHelperPublisher(elements: Long) =
-    createSimpleIntPublisher(elements)
+  override def createElement(element: Int): Int = element
 }

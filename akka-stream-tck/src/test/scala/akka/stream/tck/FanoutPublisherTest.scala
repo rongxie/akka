@@ -10,6 +10,8 @@ import org.reactivestreams.Publisher
 
 class FanoutPublisherTest extends AkkaPublisherVerification[Int] {
 
+  override lazy val system = createActorSystem()
+
   def createPublisher(elements: Long): Publisher[Int] = {
     val iterable: immutable.Iterable[Int] =
       if (elements == 0) new immutable.Iterable[Int] { override def iterator = Iterator from 0 }

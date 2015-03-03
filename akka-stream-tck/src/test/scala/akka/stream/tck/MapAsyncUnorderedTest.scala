@@ -3,15 +3,13 @@
  */
 package akka.stream.tck
 
+import akka.stream.scaladsl.{ Flow, OperationAttributes }
 import akka.stream.{ ActorFlowMaterializer, ActorFlowMaterializerSettings }
-import akka.stream.impl.ActorFlowMaterializerImpl
-import akka.stream.impl.Stages.Identity
-import akka.stream.scaladsl.Flow
-import akka.stream.scaladsl.OperationAttributes._
-import akka.stream.stage.{ Context, PushStage }
 import org.reactivestreams.{ Processor, Publisher }
 
-class TransformProcessorTest extends AkkaIdentityProcessorVerification[Int] {
+import scala.concurrent.Future
+
+class MapAsyncUnorderedTest extends AkkaIdentityProcessorVerification[Int] {
 
   override lazy val system = createActorSystem()
 
@@ -21,12 +19,8 @@ class TransformProcessorTest extends AkkaIdentityProcessorVerification[Int] {
 
     implicit val materializer = ActorFlowMaterializer(settings)(system)
 
-    val mkStage = () ⇒
-      new PushStage[Int, Int] {
-        override def onPush(in: Int, ctx: Context[Int]) = ctx.push(in)
-      }
-
-    processorFromFlow(Flow[Int].transform(mkStage))
+    processorFromFlow(
+      Flow[Int].mapAsyncUnordered(Future.successful).withAttributes(OperationAttributes.name("identity")))
   }
 
   override def createElement(element: Int): Int = element

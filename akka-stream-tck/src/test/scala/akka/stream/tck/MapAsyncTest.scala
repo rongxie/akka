@@ -3,8 +3,6 @@
  */
 package akka.stream.tck
 
-import java.util.concurrent.atomic.AtomicInteger
-
 import akka.stream.scaladsl.{ Flow, OperationAttributes }
 import akka.stream.{ ActorFlowMaterializer, ActorFlowMaterializerSettings }
 import org.reactivestreams.{ Processor, Publisher }
@@ -13,7 +11,7 @@ import scala.concurrent.Future
 
 class MapAsyncTest extends AkkaIdentityProcessorVerification[Int] {
 
-  val processorCounter = new AtomicInteger
+  override lazy val system = createActorSystem()
 
   override def createIdentityProcessor(maxBufferSize: Int): Processor[Int, Int] = {
     val settings = ActorFlowMaterializerSettings(system)
@@ -25,10 +23,6 @@ class MapAsyncTest extends AkkaIdentityProcessorVerification[Int] {
       Flow[Int].mapAsync(Future.successful).withAttributes(OperationAttributes.name("identity")))
   }
 
-  override def createHelperPublisher(elements: Long): Publisher[Int] = {
-    implicit val mat = ActorFlowMaterializer()(system)
-
-    createSimpleIntPublisher(elements)(mat)
-  }
+  override def createElement(element: Int): Int = element
 
 }

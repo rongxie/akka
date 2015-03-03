@@ -11,6 +11,8 @@ import scala.concurrent.Promise
 
 class FuturePublisherTest extends AkkaPublisherVerification[Int] {
 
+  override lazy val system = createActorSystem()
+
   def createPublisher(elements: Long): Publisher[Int] = {
     val p = Promise[Int]()
     val pub = Source(p.future).runWith(Sink.publisher())

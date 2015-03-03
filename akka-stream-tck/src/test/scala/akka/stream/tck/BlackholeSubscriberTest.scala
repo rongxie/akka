@@ -9,9 +9,10 @@ import org.reactivestreams.Subscriber
 
 class BlackholeSubscriberTest extends AkkaSubscriberBlackboxVerification[Int] {
 
-  override def createSubscriber(): Subscriber[Int] =
-    new BlackholeSubscriber[Int](2)
+  override lazy val system = createActorSystem()
 
-  override def createHelperPublisher(elements: Long): Publisher[Int] = createSimpleIntPublisher(elements)
+  override def createSubscriber(): Subscriber[Int] = new BlackholeSubscriber[Int](2)
+
+  override def createElement(element: Int): Int = element
 }
 
