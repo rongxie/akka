@@ -201,7 +201,7 @@ object Http extends ExtensionId[HttpExt] with ExtensionIdProvider {
      * and the respective [[MaterializedMap]] returned.
      */
     def handleWith[Mat](handler: Flow[HttpRequest, HttpResponse, Mat])(implicit fm: ActorFlowMaterializer): Mat =
-      flow.join(handler).mapMaterialized(_._2).run()
+      flow.joinMat(handler)(Keep.right).run()
 
     /**
      * Handles the connection with the given handler function.

@@ -79,8 +79,8 @@ class Flow[-In, +Out, +Mat](delegate: scaladsl.Flow[In, Out, Mat]) extends Graph
   /**
    * Join this [[Flow]] to another [[Flow]], by cross connecting the inputs and outputs, creating a [[RunnableFlow]]
    */
-  def join[M](flow: javadsl.Flow[Out, In, M]): javadsl.RunnableFlow[Mat @uncheckedVariance Pair M] =
-    new RunnableFlowAdapter(delegate.join(flow.asScala).mapMaterialized(p ⇒ new Pair(p._1, p._2)))
+  def join[M](flow: javadsl.Flow[Out, In, M]): javadsl.RunnableFlow[Mat] =
+    new RunnableFlowAdapter(delegate.join(flow.asScala))
 
   /**
    * Join this [[Flow]] to another [[Flow]], by cross connecting the inputs and outputs, creating a [[RunnableFlow]]
